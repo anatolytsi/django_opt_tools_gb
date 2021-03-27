@@ -1,0 +1,24 @@
+{% extends "authapp/base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="alert
+                {% if user.is_authenticated %} alert-success {% else %} alert-danger {% endif %}
+                alert-dismissible fade show" role="alert"
+                 style="margin-top: 50px; text-align: center">
+                {% if user.is_authenticated %}
+                    <h3>Поздравляем!</h3>
+                    Пользователь {{ user.username }} подтвержден.
+                    <button class="btn btn-round form-control"><a href="{% url "auth:login" %}" class="">Войти</a>
+                    </button>
+                {% else %}
+                    <h3>Верификация не пройдена.</h3>
+                    <button class="btn btn-round form-control"><a href="{% url "index" %}" class="">На главную</a>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
