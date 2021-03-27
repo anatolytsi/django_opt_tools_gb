@@ -1,0 +1,37 @@
+[
+  {
+    "model": "mainapp.ProductCategory",
+    "pk": 1,
+    "fields": {
+      "name": "Одежда"
+    }
+  },
+  {
+    "model": "mainapp.ProductCategory",
+    "pk": 2,
+    "fields": {
+      "name": "Новинки"
+    }
+  },
+  {
+    "model": "mainapp.ProductCategory",
+    "pk": 3,
+    "fields": {
+      "name": "Аксессуары"
+    }
+  },
+  {
+    "model": "mainapp.ProductCategory",
+    "pk": 4,
+    "fields": {
+      "name": "Обувь"
+    }
+  },
+  {
+    "model": "mainapp.ProductCategory",
+    "pk": 5,
+    "fields": {
+      "name": "Подарки"
+    }
+  }
+]
