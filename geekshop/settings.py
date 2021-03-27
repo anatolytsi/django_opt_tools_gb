@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -25,11 +24,10 @@ SECRET_KEY = 'eo*gk2p5@kisk=rpf^&iyvab2gu@4d5=mjum+8s4oz#2syei#k'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']  # USER: * To allow all hosts, typically you need to put your website
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
-# USER: Typically you create your own mini django apps and include them here
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,12 +36,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'mainapp',  # USER: Include your apps here
+    'mainapp',
     'authapp',
     'basketapp',
     'adminapp',
 ]
-# USER: Connection between client and backend, i.e. middleware. Here we connect the pre-made middleware
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -55,7 +53,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'geekshop.urls'
-# USER: store HTML templates here. (In order to proceed with data)
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -67,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'mainapp.context_processors.basket'
             ],
         },
     },
@@ -74,17 +73,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'geekshop.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-# USER: Databases are defined here
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -104,7 +101,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -118,13 +114,10 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
-# USER: define the static folder
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
@@ -134,4 +127,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 AUTH_USER_MODEL = "authapp.User"
 
-LOGIN_URL = "/auth/login/"
+LOGIN_URL = '/auth/login/'
+
+DOMAIN_NAME = 'http://localhost:8000'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '883dd2122c5767'
+EMAIL_HOST_PASSWORD = 'bf8e24416eeca7'
+EMAIL_PORT = '2525'
+EMAIL_USE_SSL = False
+EMAIL_FILE_PATH = 'tmp/email-messages/'
+
