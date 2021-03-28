@@ -1,50 +1,82 @@
-from django.shortcuts import render, HttpResponseRedirect
+import hashlib
+import random
+
+from django.conf import settings
+from django.contrib.auth import authenticate, login
+from django.core.mail import send_mail
+from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
 from django.contrib import auth
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 
 from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
-from basketapp.models import Basket
+from django.views.generic import FormView, UpdateView
+
+from .models import User
 
 
-def login(request):
-    if request.method == "POST":
-        form = UserLoginForm(data=request.POST)
+class GeekLoginView(FormView):
+    model = User
+    success_url = reverse_lazy("index")
+    form_class = UserLoginForm
+    template_name = "authapp/login.html"
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST)
+
         if form.is_valid():
-            username = request.POST["username"]
-            password = request.POST["password"]
-            user = auth.authenticate(username=username, password=password)
+            usr = form.cleaned_data.get("username")
+            pwd = form.cleaned_data.get("password")
+
+            user = authenticate(username=usr, password=pwd)
+
             if user and user.is_active:
-                auth.login(request, user)
-                return HttpResponseRedirect(reverse("index"))
-        else:
-            print(form.errors)
-    else:
-        form = UserLoginForm()
-    context = {
-        "title": "GeekShop - Авторизация",
-        "form": form
-    }
-    return render(request, "authapp/login.html", context)
+                login(request, user)
+                return redirect(self.success_url)
+
+        return render(request, self.template_name, {"form": form})
 
 
-def register(request):
-    if request.method == "POST":
-        form = UserRegisterForm(data=request.POST)
+class RegisterView(FormView):
+    model = User
+    form_class = UserRegisterForm
+    template_name = "authapp/register.html"
+    success_url = reverse_lazy("authapp:login")
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST)
+
         if form.is_valid():
-            form.save()
-            messages.success(request, "Вы успешно зарегистрировались!")
-            return HttpResponseRedirect(reverse("auth:login"))
+            user = form.save()
+            if self.send_verify_mail(user):
+                messages.success(request, "Вы успешно зарегистрировались!<br/>"
+                                          "Письмо со ссылкой для активации акаунта выслано на почту")
+
+            return redirect(self.success_url)
+
+        return render(request, self.template_name, {"form": form})
+
+    def verify(self, email, activation_key):
+        user = User.objects.get(email=email)
+        if user.activation_key == activation_key and not user.is_activation_key_expired():
+            user.is_active = True
+            user.save()
+            auth.login(self, user)
+            return render(self, "authapp/verification.html")
         else:
-            print(form.errors)
-    else:
-        form = UserRegisterForm()
-    context = {
-        "title": "GeekShop - Регистрация",
-        "form": form
-    }
-    return render(request, "authapp/register.html", context)
+            print(f"Error activating user: {user}")
+            return render(self, "authapp/verification.html")
+
+    @staticmethod
+    def send_verify_mail(user):
+        verify_link = reverse_lazy("authapp:verify", args=[user.email, user.activation_key])
+
+        title = f"Активация учетной записи {user.username}"
+
+        message = f"Для подтверждения учетной записи {user.username} пройдите по ссылке: \n{settings.DOMAIN_NAME}" \
+                  f"{verify_link}"
+
+        return send_mail(title, message, settings.EMAIL_HOST_USER, [user.email, ], fail_silently=False)
 
 
 def logout(request):
@@ -52,21 +84,18 @@ def logout(request):
     return HttpResponseRedirect(reverse("index"))
 
 
-@login_required
-def profile(request):
-    if request.method == "POST":
-        form = UserProfileForm(data=request.POST, files=request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Данные успешно сохраненны!")
-            return HttpResponseRedirect(reverse("auth:profile"))
-        else:
-            print(form.errors)
-    else:
-        form = UserProfileForm(instance=request.user)
-    context = {
-        "title": "GeekShop - Профиль",
-        "form": form,
-        "baskets": Basket.objects.filter(user=request.user),
-    }
-    return render(request, "authapp/profile.html", context)
+class ProfileView(UpdateView):
+    model = User
+    form_class = UserProfileForm
+    template_name = "authapp/profile.html"
+    success_url = reverse_lazy("auth:profile")
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data()
+        context.update({
+            "title": "GeekShop - Профиль",
+        })
+        return context
+
+    def get_object(self, *args, **kwargs):
+        return get_object_or_404(User, pk=self.request.user.pk)

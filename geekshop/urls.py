@@ -14,18 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.conf.urls import include
 
 from mainapp.views import ProductsIndexView
 
-# USER: connect the pages here, I guess
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", ProductsIndexView.as_view(), name="index"),  # Our web page is accessible via the main address and thus index fcn is called
-    path("products/", include("mainapp.urls", namespace="products")),  # Our web page is accessible via /products
+    path("", ProductsIndexView.as_view(), name="index"),
+    path("products/", include("mainapp.urls", namespace="products")),
     path("auth/", include("authapp.urls", namespace="auth")),
     path("baskets/", include("basketapp.urls", namespace="baskets")),
     path("admin-staff/", include("adminapp.urls", namespace="admin_staff")),
