@@ -1,3 +1,4 @@
+import datetime
 from datetime import timedelta
 
 from django.db import models
@@ -26,8 +27,8 @@ class UserProfile(models.Model):
     FEMALE = "W"
 
     GENDER_CHOICES = (
-        (MALE, "М"),
-        (FEMALE, "Ж")
+        (MALE, "Мужской"),
+        (FEMALE, "Женский")
     )
 
     user = models.OneToOneField(User, unique=True, null=False, db_index=True, on_delete=models.CASCADE)
@@ -37,6 +38,8 @@ class UserProfile(models.Model):
     about_me = models.TextField(verbose_name="о себе", max_length=512, blank=True)
 
     gender = models.CharField(verbose_name="пол", max_length=128, choices=GENDER_CHOICES, blank=True)
+
+    birthday = models.DateField(default=datetime.date.today, auto_now_add=False)
 
 
 @receiver(post_save, sender=User)

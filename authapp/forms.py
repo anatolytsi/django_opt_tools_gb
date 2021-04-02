@@ -3,7 +3,7 @@ import random
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
-from django.forms import ModelForm
+from django.forms import ModelForm, DateInput
 
 from authapp.models import User, UserProfile
 
@@ -67,7 +67,10 @@ class UserProfileForm(UserChangeForm):
 class UserProfileEditForm(ModelForm):
     class Meta:
         model = UserProfile
-        fields = ("tagline", "gender", "about_me")
+        fields = ("tagline", "gender", "about_me", "birthday")
+        widgets = {
+            "birthday": DateInput(attrs={"type": "date"})
+        }
 
     def __init__(self, *args, **kwargs):
         super(UserProfileEditForm, self).__init__(*args, **kwargs)
