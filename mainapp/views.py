@@ -32,7 +32,7 @@ class ProductsListView(ListView):
             "title": "GeekShop - Каталог",
             "categories": ProductCategory.objects.all()
         })
-        if "category_id" in self.kwargs:
+        if "category_id" in self.kwargs and self.kwargs["category_id"] != 0:
             products = Product.objects.filter(category_id=self.kwargs["category_id"]).order_by("-price")
         else:
             products = Product.objects.all().order_by("-price")
