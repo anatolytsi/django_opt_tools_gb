@@ -1,0 +1,59 @@
+{% extends "mainapp/base.html" %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static "/css/profile.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="mt-3 mb-3">Заказы</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Создан</th>
+                            <th>Обновлен</th>
+                            <th>Статус</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in object_list %}
+                            <tr>
+                            {% if item.is_active %}
+                                <td>
+                                    <a href="{% url "orders:order_read" item.id %}"
+                                       style="color: dodgerblue">{{ item.id }}</a>
+                                </td>
+                                <td>
+                                    <a href="#" style="color: dodgerblue">{{ item.created|date:"Y-m-d H:i:s" }}</a>
+                                </td>
+                                <td>
+                                    <a href="#" style="color: dodgerblue">{{ item.updated|date:"Y-m-d H:i:s" }}</a>
+                                </td>
+                                <td>
+                                    <a href="#" style="color: dodgerblue">{{ item.status }}</a>
+                                    {% if item.status == 'FM' %}
+                                        <a href="{% url "orders:order_update" item.id %}"
+                                           style="color: dodgerblue">Редактировать</a>
+                                        <a href="{% url "orders:order_delete" item.id %}"
+                                           style="color: dodgerblue">Удалить</a>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url "orders:order_create" %}">
+                    <button class="btn btn-success">Создать заказ</button>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

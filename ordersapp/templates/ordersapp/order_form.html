@@ -1,0 +1,72 @@
+{% extends "mainapp/base.html" %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static "/css/profile.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    {% include "ordersapp/includes/inc_order_summary.html" %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="mt-3 mb-3">Товары заказа | insert here</h4>
+                <div class="card-body">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                {{ orderitems.management_form }}
+                                {% for form in orderitems.forms %}
+                                    {% if forloop.first %}
+                                        <thead>
+                                        <tr>
+                                            {% for field in form.visible_fields %}
+                                                <th class="{% cycle 'td1' 'td2' 'td3' %} order formset_td">
+                                                    {{ field.label|capfirst }}
+                                                </th>
+                                            {% endfor %}
+                                        </tr>
+                                        </thead>
+                                    {% endif %}
+                                    <tr class="formset_row">
+                                        {% for field in form.visible_fields %}
+                                            <td class="{% cycle 'td1' 'td2' 'td3' %} order formset_td">
+                                                {% if forloop.first %}
+                                                    {% for hidden in form.hidden_fields %}
+                                                        {{ hidden }}
+                                                    {% endfor %}
+                                                {% endif %}
+                                                {{ field.errors.as_ul }}
+                                                {{ field }}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-lg-12" style="margin-top: 33px;">
+                                <input class="btn btn-info btn-block" type="submit" value="Сохранить">
+                        {% include 'ordersapp/includes/inc_order_actions.html' %}
+                            </div>
+                        </div>
+                    </form>
+{#                    <div class="row">#}
+{#                        <div class="col-lg-12" style="margin-top: 33px;">#}
+{#                            <a href="{% url "admin_staff:admin_categories_delete" productcategory.id %}"#}
+{#                               style="text-decoration: none">#}
+{#                                <form action="{% url "admin_staff:admin_categories_delete" productcategory.id %}"#}
+{#                                      method="post">#}
+{#                                    {% csrf_token %}#}
+{#                                    <input type="submit" value="Удалить" class="btn btn-danger btn-block">#}
+{#                                </form>#}
+{#                            </a>#}
+{#                        </div>#}
+{#                    </div>#}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
