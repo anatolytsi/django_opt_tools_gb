@@ -14,45 +14,107 @@
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Создан</th>
-                            <th>Обновлен</th>
-                            <th>Статус</th>
+                            {#                            <th>ID</th>#}
+                            {#                            <th>Создан</th>#}
+                            {#                            <th>Обновлен</th>#}
+                            {#                            <th>Статус</th>#}
+                            <th>Заказ</th>
+                            <th>Товар</th>
+                            <th>Действия с товаром</th>
+                            <th>Статус заказа</th>
+                            <th>Действия с заказом</th>
+                            <th>Итоговая стоимость</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for item in object_list %}
+                        {% for order in object_list %}
                             <tr>
-                            {% if item.is_active %}
-                                <td>
-                                    <a href="{% url "orders:order_read" item.id %}"
-                                       style="color: dodgerblue">{{ item.id }}</a>
-                                </td>
-                                <td>
-                                    <a href="#" style="color: dodgerblue">{{ item.created|date:"Y-m-d H:i:s" }}</a>
-                                </td>
-                                <td>
-                                    <a href="#" style="color: dodgerblue">{{ item.updated|date:"Y-m-d H:i:s" }}</a>
-                                </td>
-                                <td>
-                                    <a href="#" style="color: dodgerblue">{{ item.status }}</a>
-                                    {% if item.status == 'FM' %}
-                                        <a href="{% url "orders:order_update" item.id %}"
-                                           style="color: dodgerblue">Редактировать</a>
-                                        <a href="{% url "orders:order_delete" item.id %}"
-                                           style="color: dodgerblue">Удалить</a>
-                                    {% endif %}
-                                </td>
+                                {% if order.is_active %}
+                                    <td style="min-width: 300px;">
+                                        <a href="{% url "orders:order_read" order.id %}"
+                                           style="color: dodgerblue">ID заказа: {{ order.id }}</a><br>
+                                        Время создания: {{ order.created|date:"M. d Y, H:i" }}<br>
+                                        Время изменения: {{ order.updated|date:"M. d Y, H:i" }}<br>
+                                        <a href="#" data-toggle="collapse" data-target="#accordion{{ order.id }}"
+                                           style="color: dodgerblue">Товары заказа</a>
+                                    </td>
+                                    <td></td>
+                                    <td style="max-width: 50px;"></td>
+                                    <td style="max-width: 50px;">
+                                        {{ order.status }}
+                                    </td>
+                                    <td>
+                                        {% if order.status == 'FM' %}
+                                            <a href="{% url 'orders:order_forming_complete' order.id %}">
+                                                Совершить покупку
+                                            </a>
+                                            <a href="{% url "orders:order_update" order.id %}"
+                                               style="color: dodgerblue">Редактировать</a> <br>
+                                            <a href="{% url "orders:order_delete" order.id %}"
+                                               style="color: dodgerblue">Удалить</a>
+                                        {% else %}
+                                            <a href="#" style="color: dodgerblue">Отследить</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ order.get_total_cost }} руб.
+                                    </td>
+                                {% endif %}
+                            </tr>
+
+                            {% if order.is_active %}
+                                {% for item in order.orderitems.select_related %}
+                                    <tr id="accordion{{ order.id }}" class="collapse">
+                                        <td></td>
+                                        <td style="word-wrap: break-word; max-width: 200px;">
+                                            <a href="{% url "products:product" item.product.id %}"
+                                               style="color: dodgerblue"><img src="/media/{{ item.product.image }}"
+                                                                              title="{{ item.product.name }}"
+                                                                              alt="{{ item.product.name }}"
+                                                                              style="width: 150px;">
+                                            </a>
+                                            <span class="product_price">
+                                            {{ item.product.price }}&nbspруб
+                                        </span>
+                                            <span class="product_quantitiy">
+                                            x {{ item.quantity }}&nbspшт.
+                                        </span>
+
+                                        </td>
+                                        <td>
+                                            {% if order.status == 'FM' %}
+                                                <a href="#">Удалить</a>
+                                                {# Удаление в настоящий момент сделано через форму, #}
+                                                {# поэтому здесь заглушка #}
+                                            {% else %}
+                                                <a href="#" style="color: dodgerblue">Отследить</a>
+                                            {% endif %}
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <span class="product_cost">
+                                            {{ item.get_product_cost }}&nbspруб
+                                        </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                             {% endif %}
                         {% endfor %}
+                        <tr>
+                            <td><a href="{% url "orders:order_create" %}">
+                                <button class="btn btn-success">Создать новый заказ</button>
+                            </a></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+
+                        </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div class="card-footer">
-                <a href="{% url "orders:order_create" %}">
-                    <button class="btn btn-success">Создать заказ</button>
-                </a>
             </div>
         </div>
     </div>

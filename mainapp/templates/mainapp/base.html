@@ -42,6 +42,7 @@
                         <div class="dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
                                 {{ user.username|default:"Пользователь" }}
+                                <i class="fas fa-user-circle"></i>
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
@@ -52,7 +53,7 @@
                                 </li>
                                 <li>
                                     <a class="nav-link text-dark" href="{% url "orders:index" %}">Заказы
-                                        <i class="fas fa-user-circle"></i>
+                                        <i class="fas fa-shopping-cart"></i>
                                     </a>
                                 </li>
                                 {% if user.is_staff or user.is_superuser %}

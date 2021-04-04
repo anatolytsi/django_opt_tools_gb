@@ -15,6 +15,11 @@ from ordersapp.models import Order, OrderItem
 class OrderList(LoginRequiredMixin, ListView):
     model = Order
 
+    def get_context_data(self, **kwargs):
+        context = super(OrderList, self).get_context_data(**kwargs)
+        context["title"] = "GeekShop - Заказы"
+        return context
+
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
 
@@ -43,6 +48,7 @@ class OrderCreate(LoginRequiredMixin, CreateView):
             else:
                 formset = OrderFormSet()
         data["orderitems"] = formset
+        data["title"] = "GeekShop - Новый заказ"
         return data
 
     def form_valid(self, form):
@@ -99,7 +105,7 @@ class OrderRead(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OrderRead, self).get_context_data(**kwargs)
-        context['title'] = 'заказ/просмотр'
+        context["title"] = "GeekShop - Просмотр заказа"
         return context
 
 

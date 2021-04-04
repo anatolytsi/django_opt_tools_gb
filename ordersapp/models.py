@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from mainapp.models import Product
 
@@ -67,3 +68,7 @@ class OrderItem(models.Model):
 
     def get_product_cost(self):
         return self.product.price * self.quantity
+
+    def save(self, *args, **kwargs):
+        self.order.updated = timezone.now()
+        super(OrderItem, self).save(*args, **kwargs)
