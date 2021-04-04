@@ -48,7 +48,7 @@ class OrderCreate(LoginRequiredMixin, CreateView):
             else:
                 formset = OrderFormSet()
         data["orderitems"] = formset
-        data["title"] = "GeekShop - Новый заказ"
+        data["title"] = "Новый заказ"
         return data
 
     def form_valid(self, form):
@@ -74,13 +74,14 @@ class OrderUpdate(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("orders:index")
 
     def get_context_data(self, **kwargs):
-        data = super(OrderUpdate, self).get_context_data(**kwargs)
+        context = super(OrderUpdate, self).get_context_data(**kwargs)
         OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
         if self.request.POST:
-            data['orderitems'] = OrderFormSet(self.request.POST, instance=self.object)
+            context['orderitems'] = OrderFormSet(self.request.POST, instance=self.object)
         else:
-            data['orderitems'] = OrderFormSet(instance=self.object)
-        return data
+            context['orderitems'] = OrderFormSet(instance=self.object)
+        context["title"] = "Редактирование заказа"
+        return context
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -99,13 +100,18 @@ class OrderDelete(DeleteView):
     model = Order
     success_url = reverse_lazy("orders:index")
 
+    def get_context_data(self, **kwargs):
+        context = super(OrderDelete, self).get_context_data(**kwargs)
+        context["title"] = "Удаление заказа"
+        return context
+
 
 class OrderRead(DetailView):
     model = Order
 
     def get_context_data(self, **kwargs):
         context = super(OrderRead, self).get_context_data(**kwargs)
-        context["title"] = "GeekShop - Просмотр заказа"
+        context["title"] = "Просмотр заказа"
         return context
 
 

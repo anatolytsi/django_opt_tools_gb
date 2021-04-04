@@ -1,18 +1,22 @@
 {% if object.status == 'FM' %}
-    <button class="btn btn-warning btn-round form-control last">
-        <a href="{% url 'orders:order_forming_complete' object.pk %}">
-            совершить покупку
+    <div class="col-lg-3" style="margin-top: 33px;">
+        <a class="btn btn-success btn-block" href="{% url 'orders:order_forming_complete' object.pk %}">
+            Совершить покупку
         </a>
-    </button>
-    <button class="btn btn-default btn-round form-control last">
-        <a href="{% url 'orders:order_delete' object.pk %}">удалить</a>
-    </button>
+    </div>
+    <div class="col-lg-2" style="margin-top: 33px;">
+        <a class="btn btn-danger btn-block" href="{% url 'orders:order_delete' object.pk %}">
+            Удалить
+        </a>
+    </div>
 {% endif %}
-<button class="btn btn-info btn-round form-control last">
-    <a href="{% url 'orders:index' %}">
-        к списку заказов
+<div class="col-lg-{% if object.status == 'FM' %}2{% else %}4{% endif %}" style="margin-top: 33px;">
+    <a class="btn btn-info btn-block" href="{% url 'orders:index' %}">
+        К списку заказов
     </a>
-</button>
-<button class="btn btn-default btn-round form-control last">
-    <a href="{% url 'products:index' %}">на главную</a>
-</button>
+</div>
+<div class="col-lg-{% if object.status == 'FM' %}2{% else %}4{% endif %}" style="margin-top: 33px;">
+    <a class="btn btn-info btn-block" href="{% url 'products:index' %}">
+        На главную
+    </a>
+</div>

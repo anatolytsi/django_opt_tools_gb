@@ -14,8 +14,7 @@ class ProductsIndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ProductsIndexView, self).get_context_data()
         context.update({
-            "title": "GeekShop",
-            "header": "GeekShop Store",
+            "title": "Магазин ",
             "description": "Новые образы и лучшие бренды на GeekShop Store.Бесплатная доставка по всему миру! Аутлет: до "
                            "-70% Собственный бренд. -20% новым покупателям. "
         })
@@ -29,7 +28,7 @@ class ProductsListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(ProductsListView, self).get_context_data()
         context.update({
-            "title": "GeekShop - Каталог",
+            "title": "Каталог",
             "categories": ProductCategory.objects.all()
         })
         if "category_id" in self.kwargs and self.kwargs["category_id"] != 0:
