@@ -9,7 +9,7 @@ from django.dispatch import receiver
 
 
 class User(AbstractUser):
-    avatar = models.ImageField(upload_to="users_avatars", blank=True)
+    avatar = models.ImageField(upload_to="users_avatars", blank=True, max_length=500)
     email = models.EmailField(unique=True)
 
     activation_key = models.CharField(max_length=128, blank=True)
