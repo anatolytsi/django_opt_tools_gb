@@ -47,8 +47,9 @@ def save_user_profile(backend, user, response, *args, **kwargs):
             user.avatar = path_to_avatar
     elif backend.name == "google-oauth2":
         if response["picture"]:
-            path_to_avatar = f"{MEDIA_ROOT}/users_avatars/" \
-                             f"{''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(100))}.jpg"
+            relative_path = f"users_avatars/" \
+                            f"{''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(100))}.jpg"
+            path_to_avatar = f"{MEDIA_ROOT}/{relative_path}"
             urlretrieve(response["picture"], path_to_avatar)
-            user.avatar = path_to_avatar
+            user.avatar = relative_path
     return
