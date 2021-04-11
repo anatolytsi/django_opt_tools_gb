@@ -26,6 +26,18 @@ window.onload = () => {
         orderSummaryUpdate(price_arr[orderitem_num], delta_quantity);
     }
 
+    function orderSummaryRecalculate() {
+        order_total_quantity = 0;
+        order_total_price = 0;
+
+        for (let i=0; i < total_forms; i++) {
+            order_total_quantity += quantity_arr[i];
+            order_total_price += quantity_arr[i] * price_arr[i];
+        }
+        $('.order_total_quantity').html(order_total_quantity.toString());
+        $('.order_total_cost').html(Number(order_total_price.toFixed(2).toString()));
+    }
+
     for (let i = 0; i < total_forms; i++) {
         _quantity = parseInt($(`input[name=orderitems-${i}-quantity]`).val());
         _price = parseFloat($(`.orderitems-${i}-price`).text().replace(",", "."));
@@ -70,8 +82,35 @@ window.onload = () => {
         removed: deleteOrderItem
     });
 
-    $(".order_form select").change(function () {
+    if(!order_total_quantity){
+        orderSummaryRecalculate();
+    }
+
+    $(".order_form select").change(() => {
         let target = event.target;
+        orderitem_num = parseInt(target.name.replace("orderitems-", "").replace("-product", ""));
+        let orderitem_product_pk = target.options[target.selectedIndex].value;
+
+        if (orderitem_product_pk) {
+            $.ajax({
+                url: `/orders/product/${orderitem_product_pk}/price/`,
+                success: (data) => {
+                    if (data.price) {
+                        price_arr[orderitem_num] = parseFloat(data.price);
+                        if (isNaN(quantity_arr[orderitem_num])) {
+                            quantity_arr[orderitem_num] = 0;
+                        }
+                        let price_html = `<span>${data.price.toString()} руб.</span>`;
+                        let current_tr = $(".order_form table").find(`tr:eq(${orderitem_num + 1})`);
+                        current_tr.find(`td:eq(2)`).html(price_html);
+                        if(isNaN(current_tr.find('input[type="number"]').val())) {
+                            current_tr.find('input[type="number"]').val(0);
+                        }
+                        orderSummaryRecalculate();
+                    }
+                }
+            })
+        }
         console.log(target);
     });
 

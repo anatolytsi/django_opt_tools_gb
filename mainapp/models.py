@@ -20,6 +20,10 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to="products_images", blank=True)
     category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
+    is_active = models.BooleanField(
+        verbose_name='активен',
+        default=True
+    )
 
     def __str__(self):
         return f"{self.name} | {self.category.name}"
