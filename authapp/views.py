@@ -2,14 +2,15 @@ import hashlib
 import random
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
 from django.contrib import auth
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
+from django.db import transaction
 
-from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
+from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm, UserProfileEditForm
 from django.views.generic import FormView, UpdateView
 
 from .models import User
@@ -61,7 +62,7 @@ class RegisterView(FormView):
         if user.activation_key == activation_key and not user.is_activation_key_expired():
             user.is_active = True
             user.save()
-            auth.login(self, user)
+            auth.login(self, user, backend="django.contrib.auth.backends.ModelBackend")
             return render(self, "authapp/verification.html")
         else:
             print(f"Error activating user: {user}")
@@ -87,15 +88,31 @@ def logout(request):
 class ProfileView(UpdateView):
     model = User
     form_class = UserProfileForm
+    second_form_class = UserProfileEditForm
     template_name = "authapp/profile.html"
     success_url = reverse_lazy("auth:profile")
 
     def get_context_data(self, **kwargs):
-        context = super(ProfileView, self).get_context_data()
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        if "profile_form" not in context:
+            context["profile_form"] = self.second_form_class(instance=self.request.user.userprofile)
         context.update({
             "title": "GeekShop - Профиль",
         })
         return context
+
+    @transaction.atomic
+    def form_valid(self, form, *args, **kwargs):
+        profile_form = UserProfileEditForm(
+            data=self.request.POST,
+            files=self.request.FILES,
+            instance=self.request.user.userprofile
+        )
+        if profile_form.is_valid():
+            form.save()
+            profile_form.save()
+            return HttpResponseRedirect(self.success_url)
+        return render(self.request, self.template_name, {"form": form, "profile_form": profile_form})
 
     def get_object(self, *args, **kwargs):
         return get_object_or_404(User, pk=self.request.user.pk)
