@@ -13,24 +13,32 @@
                 {% include 'ordersapp/includes/inc_order_summary.html' %}
                 <div class="basket_list">
                     {% for item in object.orderitems.select_related %}
-                        <div class="basket_record">
-                            <img src="/media/{{ item.product.image }}" width="100px" style="margin: 10px 5px 10px 0px"
-                                 alt="{{ item.product.short_desc }}">
-                            <span class="category_name">
+                        <div class="basket_record" style="display: table;">
+                            <div style="display:table-cell;">
+                                <img src="/media/{{ item.product.image }}" width="100px"
+                                     style="margin: 10px 5px 10px 0px"
+                                     alt="{{ item.product.short_desc }}">
+                            </div>
+
+                            <div style="display:table-cell;">
+                                <span class="category_name">
                                 {{ item.product.category.name }} |
                             </span>
-                            <span class="product_name">
+                                <span class="product_name">
                                 {{ item.product.name }}:
                             </span>
-                            <span class="product_price">
+                                <br>
+                                <span class="product_price">
                                 {{ item.product.price }}&nbspруб
                             </span>
-                            <span class="product_quantitiy">
+                                <span class="product_quantitiy">
                                 x {{ item.quantity }} шт.
                             </span>
-                            <span class="product_cost">
+                                <span class="product_cost">
                                 = {{ item.get_product_cost }}&nbspруб
                             </span>
+                            </div>
+
                         </div>
                     {% endfor %}
                 </div>
