@@ -60,7 +60,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name="orderitems", on_delete=models.CASCADE)
     product = models.ForeignKey(Product, verbose_name="продукт", on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(verbose_name="заказ", default=0)
+    quantity = models.PositiveIntegerField(verbose_name="количество", default=0)
 
     class Meta:
         verbose_name = "продукты заказа"
