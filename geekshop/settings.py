@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'authapp',
     'basketapp',
     'adminapp',
+    'ordersapp',
 ]
 
 MIDDLEWARE = [
@@ -145,6 +146,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 AUTH_USER_MODEL = "authapp.User"
 
 LOGIN_URL = '/auth/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 DOMAIN_NAME = 'http://localhost:8000'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -160,9 +163,6 @@ LOGIN_ERROR_URL = '/'
 
 SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
-
-# SOCIAL_AUTH_GOOGLE_OAUTH2_IGNORE_DEFAULT_SCOPE = True
-# SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email']
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
