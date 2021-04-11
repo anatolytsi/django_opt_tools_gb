@@ -72,3 +72,12 @@ class OrderItem(models.Model):
     def save(self, *args, **kwargs):
         self.order.updated = timezone.now()
         super(OrderItem, self).save(*args, **kwargs)
+
+    @staticmethod
+    def get_item(pk):
+        return OrderItem.objects.filter(pk=pk).first()
+
+    def delete(self, *args, **kwargs):
+        self.product.quantity += self.quantity
+        self.product.save()
+        super(OrderItem, self).delete(*args, **kwargs)
