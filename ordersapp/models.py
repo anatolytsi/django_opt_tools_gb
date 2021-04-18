@@ -60,7 +60,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name="orderitems", on_delete=models.CASCADE)
     product = models.ForeignKey(Product, verbose_name="продукт", on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(verbose_name="заказ", default=0)
+    quantity = models.PositiveIntegerField(verbose_name="количество", default=0)
 
     class Meta:
         verbose_name = "продукты заказа"
@@ -72,3 +72,12 @@ class OrderItem(models.Model):
     def save(self, *args, **kwargs):
         self.order.updated = timezone.now()
         super(OrderItem, self).save(*args, **kwargs)
+
+    @staticmethod
+    def get_item(pk):
+        return OrderItem.objects.filter(pk=pk).first()
+
+    def delete(self, *args, **kwargs):
+        self.product.quantity += self.quantity
+        self.product.save()
+        super(OrderItem, self).delete(*args, **kwargs)

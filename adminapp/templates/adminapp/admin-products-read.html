@@ -35,9 +35,9 @@
                                 <td><a href="{% url "admin_staff:admin_products_update" product.id %}"
                                        style="color: dodgerblue">{{ product.name }}</a></td>
                                 <td>{{ product.short_description }}</td>
-                                <td>{{ product.category }}</td>
                                 <td>{{ product.price }}</td>
                                 <td>{{ product.quantity }}</td>
+                                <td>{{ product.category }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
