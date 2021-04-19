@@ -1,0 +1,56 @@
+<div class="row products_list">
+    {% for product in products %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <a href="#">
+                    <img class="card-img-top"
+                         src="/media/{{ product.image }}"
+                         alt="">
+                </a>
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <a href="{% url 'products:product' product.id %}">{{ product.name }}</a>
+                    </h4>
+                    <h5>{{ product.price }} руб.</h5>
+                    <p class="card-text">{{ product.short_description }}</p>
+                </div>
+
+                <div class="card-footer text-center">
+                    <a href="{% url "baskets:basket_add" product.id %}">
+                        <button type="button" class="btn btn-outline-success">Отправить в корзину
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<div class="paginator_list">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if not products.has_previous %} disabled {% endif %}">
+                <a class="page-link"
+                   href="{% if products.has_previous %}{% url "products:page" products.previous_page_number %}{% else %}#{% endif %}"
+                   tabindex="-1" aria-disabled="true">
+                    Previous
+                </a>
+            </li>
+            {% for page in products.paginator.page_range %}
+                <li class="page-item">
+                    <a class="page-link" {% ifequal page products.number %} href="#"
+                       style="background-color: #e9ecef; color: #0056b3" {% else %}
+                       href="{% url "products:category_choose" 0 page %}" {% endifequal %}>
+                        {{ page }}
+                    </a>
+                </li>
+            {% endfor %}
+            <li class="page-item {% if not products.has_next %} disabled {% endif %}">
+                <a class="page-link"
+                   href="{% if products.has_next %}{% url "products:category_choose" 0 products.next_page_number %}{% else %}#{% endif %}"
+                   tabindex="-1" aria-disabled="true">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
