@@ -30,7 +30,7 @@
         <ul class="pagination justify-content-center">
             <li class="page-item {% if not products.has_previous %} disabled {% endif %}">
                 <a class="page-link"
-                   href="{% if products.has_previous %}{% url "products:page" products.previous_page_number %}{% else %}#{% endif %}"
+                   href="{% if products.has_previous %}{% url "products:category_choose" category_id products.previous_page_number %}{% else %}#{% endif %}"
                    tabindex="-1" aria-disabled="true">
                     Previous
                 </a>
@@ -39,14 +39,14 @@
                 <li class="page-item">
                     <a class="page-link" {% ifequal page products.number %} href="#"
                        style="background-color: #e9ecef; color: #0056b3" {% else %}
-                       href="{% url "products:category_choose" 0 page %}" {% endifequal %}>
+                       href="{% url "products:category_choose" category_id page %}" {% endifequal %}>
                         {{ page }}
                     </a>
                 </li>
             {% endfor %}
             <li class="page-item {% if not products.has_next %} disabled {% endif %}">
                 <a class="page-link"
-                   href="{% if products.has_next %}{% url "products:category_choose" 0 products.next_page_number %}{% else %}#{% endif %}"
+                   href="{% if products.has_next %}{% url "products:category_choose" category_id products.next_page_number %}{% else %}#{% endif %}"
                    tabindex="-1" aria-disabled="true">
                     Next
                 </a>

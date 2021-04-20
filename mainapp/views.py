@@ -171,7 +171,8 @@ def category_choose(request, category_id=0, page=1):
         content = ({
             "title": "Каталог",
             "categories": ProductCategory.objects.all(),
-            "products": products_paginator
+            "products": products_paginator,
+            "category_id": category_id
         })
         result = render_to_string("mainapp/products_list_inc.html", context=content, request=request)
         return JsonResponse({"result": result})
