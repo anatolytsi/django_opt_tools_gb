@@ -35,7 +35,8 @@ class ProductsListView(ListView):
         context = super(ProductsListView, self).get_context_data()
         context.update({
             "title": "Каталог",
-            "categories": ProductCategory.objects.all()
+            "categories": ProductCategory.objects.all(),
+            "category_id": 0
         })
         if "category_id" in self.kwargs and self.kwargs["category_id"] != 0:
             products = Product.objects.filter(category_id=self.kwargs["category_id"]).order_by("-price")
