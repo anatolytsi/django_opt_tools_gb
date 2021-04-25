@@ -51,6 +51,17 @@ class ProductsListView(ListView):
         return context
 
 
+class ProductDetail(DetailView):
+    model = Product
+    template_name = 'mainapp/products_detail.html'
+    context_object_name = 'product'
+
+    def get_context_data(self, category_id=None, *args, **kwargs):
+        context = super().get_context_data()
+        context['categories'] = ProductCategory.objects.all()
+        return context
+
+
 def get_links_menu():
     if settings.LOW_CACHE:
         key = 'links_menu'
