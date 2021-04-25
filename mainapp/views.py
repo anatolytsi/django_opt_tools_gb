@@ -1,9 +1,11 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
+from django.urls import reverse_lazy
+from django.views.generic import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.base import TemplateView
 
@@ -174,6 +176,9 @@ def products_ajax(request, pk=None, page=1):
 
 def category_choose(request, category_id=0, page=1):
     if request.is_ajax():
+        # Hardcoded for now
+        if 'detail' in request.headers['Referer']:
+            return HttpResponse(reverse_lazy("mainapp:index"))
         if category_id == 0:
             products = Product.objects.all().order_by("-price")
         else:
