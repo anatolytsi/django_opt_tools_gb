@@ -92,6 +92,11 @@ class ProfileView(UpdateView):
     template_name = "authapp/profile.html"
     success_url = reverse_lazy("auth:profile")
 
+    def get(self, *args, **kwargs):
+        if self.request.user.pk:
+            return super(ProfileView, self).get(*args, **kwargs)
+        return HttpResponseRedirect(reverse_lazy("auth:login"))
+
     def get_context_data(self, **kwargs):
         context = super(ProfileView, self).get_context_data(**kwargs)
         if "profile_form" not in context:
