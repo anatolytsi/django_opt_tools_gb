@@ -1,5 +1,6 @@
 {% extends "mainapp/base.html" %}
 {% load static %}
+{% load cache %}
 
 {% block css %}
     <link href="{% static "css/profile.css" %}" rel="stylesheet">
@@ -43,7 +44,9 @@
                                             {% else %}
                                                 {% if field.value %}
                                                     <span class="orderitems-{{ forloop.parentloop.counter0 }}-price">
-                                                    {{ field.value }}
+                                                    {% cache 3600 orderitemform_product field.value %}
+                                                        {{ field.value }}
+                                                    {% endcache %}
                                                     </span> руб
                                                 {% endif %}
                                             {% endif %}
@@ -64,5 +67,5 @@
             </div>
         </div>
     </div>
-<script src="{% static 'js/orders.js' %}"></script>
+    <script src="{% static 'js/orders.js' %}"></script>
 {% endblock %}

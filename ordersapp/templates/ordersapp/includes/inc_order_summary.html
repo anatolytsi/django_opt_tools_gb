@@ -13,12 +13,14 @@
         Статус: {{ object.get_status_display }}
     </h6>
     <hr>
-    <h6 class="mt-3 mb-3">
-        Общее количество товаров: <span class="order_total_quantity">{{ object.get_total_quantity }}</span>
-    </h6>
-    <h5 class="mt-3 mb-3">
-        Общая стоимость: <span class="order_total_cost">{{ object.get_total_cost }}</span> руб</span>
-    </h5>
+    {% with object_summary=object.get_summary %}
+        <h6 class="mt-3 mb-3">
+            Общее количество товаров: <span class="order_total_quantity">{{ object_summary.total_quantity }}</span>
+        </h6>
+        <h5 class="mt-3 mb-3">
+            Общая стоимость: <span class="order_total_cost">{{ object_summary.total_cost }}</span> руб</span>
+        </h5>
+    {% endwith %}
 {% else %}
     <h4 class="mt-3 mb-3">
         Заказчик: {{ user.last_name }} {{ user.first_name }}
