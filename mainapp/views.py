@@ -1,9 +1,11 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
+from django.urls import reverse_lazy
+from django.views.generic import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.base import TemplateView
 
@@ -35,7 +37,8 @@ class ProductsListView(ListView):
         context = super(ProductsListView, self).get_context_data()
         context.update({
             "title": "Каталог",
-            "categories": ProductCategory.objects.all()
+            "categories": ProductCategory.objects.all(),
+            "category_id": 0
         })
         if "category_id" in self.kwargs and self.kwargs["category_id"] != 0:
             products = Product.objects.filter(category_id=self.kwargs["category_id"]).order_by("-price")
@@ -47,6 +50,17 @@ class ProductsListView(ListView):
         else:
             products_paginator = paginator.page(1)
         context.update({"products": products_paginator})
+        return context
+
+
+class ProductDetail(DetailView):
+    model = Product
+    template_name = 'mainapp/products_detail.html'
+    context_object_name = 'product'
+
+    def get_context_data(self, category_id=None, *args, **kwargs):
+        context = super().get_context_data()
+        context['categories'] = ProductCategory.objects.all()
         return context
 
 
@@ -162,6 +176,9 @@ def products_ajax(request, pk=None, page=1):
 
 def category_choose(request, category_id=0, page=1):
     if request.is_ajax():
+        # Hardcoded for now
+        if 'detail' in request.headers['Referer']:
+            return HttpResponse(reverse_lazy("mainapp:index"))
         if category_id == 0:
             products = Product.objects.all().order_by("-price")
         else:
